@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Ball : MonoBehaviour
 {
@@ -15,7 +16,11 @@ public class Ball : MonoBehaviour
 
     [SerializeField]
     private float _speed;
-    
+
+
+    private Rigidbody _rigidbody;
+    private MeshRenderer _meshRenderer;
+    private Collider _collider;
 
     public float Speed { get => _speed; set => _speed = value; }
     public float Z { 
@@ -28,6 +33,16 @@ public class Ball : MonoBehaviour
     }
 
     public static Ball Instance { get => instance; set => instance = value; }
+    public Rigidbody Rigidbody { get => _rigidbody; set => _rigidbody = value; }
+    public MeshRenderer MeshRenderer { get => _meshRenderer; set => _meshRenderer = value; }
+    public Collider Collider { get => _collider; set => _collider = value; }
+
+    private void Start()
+    {
+        Rigidbody = GetComponent<Rigidbody>();
+        MeshRenderer = GetComponent<MeshRenderer>();
+        Collider = GetComponent<Collider>();
+    }
 
     void Update()
     {
@@ -107,10 +122,40 @@ public class Ball : MonoBehaviour
         if (other.CompareTag("Obstacle"))
         {
             Debug.Log("GameOver");
+            StartCoroutine(Died());
         }
 
     }
 
+
+
+    private IEnumerator Died()
+    {
+        GameController.Instance.GameStatus = GameStatus.died;
+
+        Collider.enabled = false;
+
+        Rigidbody.constraints = RigidbodyConstraints.None;
+
+        transform.DOScale(2f, 0.8f);
+
+        yield return new WaitForEndOfFrame();
+        Rigidbody.AddExplosionForce(10f, transform.position, 1f, 1f, ForceMode.VelocityChange);
+       
+        yield return new WaitForSeconds(0.8f);
+
+        _meshRenderer.enabled = false;
+        GameObject explosion = GameObject.Instantiate(Resources.Load("BallExplosion") as GameObject
+            ,transform.position,Quaternion.identity);
+
+
+        yield return new WaitForSeconds(1.1f);
+
+        Destroy(explosion);
+
+        Rigidbody.constraints = RigidbodyConstraints.FreezePositionZ;
+
+    }
 
 
 }

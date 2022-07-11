@@ -25,6 +25,8 @@ public class GameController : MonoBehaviour
 
 
 
+
+
     private int numberOfObstacles = 12;
     private void CreateNewLevel()
     {
@@ -36,7 +38,6 @@ public class GameController : MonoBehaviour
         {
             obstacle = GameObject.Instantiate(Resources.Load("Obstacle") as GameObject);
 
-            Debug.Log(Obstacle.LastObstacle.transform.position.z);
         }
 
         GameObject finish = GameObject.Instantiate(Resources.Load("Finish") as GameObject);
@@ -45,6 +46,9 @@ public class GameController : MonoBehaviour
 
 
     }
+
+
+
 
 }
 
@@ -58,6 +62,7 @@ public enum GameStatus
     menu,
     waitForMove,
     moving,
+    died,
     finish,
 
 }
