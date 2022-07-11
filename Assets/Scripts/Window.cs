@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class Window : MonoBehaviour
 {
 
-    private const float _positionYmin = 4, _positionYmax = 12;
-    private const float _positionXmin = 4, _positionXmax = 12;
+    private const float _positionYmin = 3, _positionYmax = 6;
+    private const float _positionXmin = 3, _positionXmax = 6;
 
     private static Window _lastWindow;
 
@@ -41,12 +42,29 @@ public class Window : MonoBehaviour
     }
 
 
+
+    private bool broken;
     public void BreakWindow()
     {
-
-
+        if (broken)
+            return;
+        StartCoroutine(BreakRoutine());
     }
 
+    private IEnumerator BreakRoutine()
+    {
+        broken = true;
 
+        foreach (Transform child in transform)
+        {
+            Rigidbody rb = child.GetComponent<Rigidbody>();
+            rb.isKinematic = false;
+            rb.AddExplosionForce(20f, transform.position, 0.6f, 0.6f, ForceMode.VelocityChange);
+            //rb.transform.DOScale(0.2f, 0.5f);
+        }
+
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
+    }
 
 }

@@ -125,6 +125,12 @@ public class Ball : MonoBehaviour
             StartCoroutine(Died());
         }
 
+        if (other.CompareTag("Window"))
+        {
+            Debug.Log("Window");
+            other.GetComponent<Window>().BreakWindow();
+        }
+
     }
 
 
