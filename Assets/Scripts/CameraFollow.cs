@@ -5,10 +5,21 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
+
+    private static bool _following = true;
+
     private float _time, _speed = 2;
+
+    public static bool Following { get => _following; set => _following = value; }
 
     void Update()
     {
+
+        if (!Following)
+        {
+            return;
+        }
+
         float cameraZ;
         if (_time < 1)
         {

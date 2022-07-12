@@ -76,6 +76,9 @@ public class Ball : MonoBehaviour
             }
         }
 
+        if(GameController.Instance.CurrentStatus == GameStatus.levelUp)
+            GoForward();
+
         if (GameController.Instance.CurrentStatus != GameStatus.playing)
         {
             Ball.Instance.Rigidbody.velocity = Vector3.zero;
@@ -85,7 +88,8 @@ public class Ball : MonoBehaviour
 
         if (Touch.Pressing)
         {
-            float speed = Hexagon.Instance.MaxRotationSpeed * (Touch.TouchDistanceToCenter()) / (Screen.width / 2);
+            float speed = Hexagon.Instance.MaxRotationSpeed 
+                * (0.5f + (Touch.TouchDistanceToCenter()) / (Screen.width / 2));
             Hexagon.Instance.Rotate(Touch.TouchDirection(), speed);
         }
 
@@ -154,6 +158,12 @@ public class Ball : MonoBehaviour
 
         }
 
+
+        if (other.CompareTag("FinishLine"))
+        {
+            StartCoroutine(LevelUp());
+        }
+
     }
 
 
@@ -190,6 +200,20 @@ public class Ball : MonoBehaviour
         Rigidbody.constraints = RigidbodyConstraints.FreezePositionZ;
         GameController.Instance.ChangeGameStatus(GameStatus.menu);
     }
+
+
+    private IEnumerator LevelUp()
+    {
+        Collider.enabled = false;
+        Rigidbody.isKinematic = true;
+        CameraFollow.Following = false;
+        GameController.Instance.ChangeGameStatus(GameStatus.levelUp);
+        yield return new WaitForSeconds(2f);
+        GameController.Instance.ChangeGameStatus(GameStatus.waitToPlay);
+        CameraFollow.Following = true;
+        Rigidbody.isKinematic = false;
+    }
+
 
 
     [Serializable]

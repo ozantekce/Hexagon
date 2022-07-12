@@ -21,7 +21,16 @@ public class Hexagon : MonoBehaviour
     }
 
 
+    private RotateDirection lastDirection;
+    private void Update()
+    {
 
+        /*
+        if(GameController.Instance.CurrentStatus == GameStatus.playing)
+            Rotate(lastDirection, 5f);
+        */
+
+    }
     public void Rotate(RotateDirection direction,float speed)
     {
 
@@ -30,11 +39,15 @@ public class Hexagon : MonoBehaviour
         if(direction == RotateDirection.left)
         {
             transform.Rotate(0f, 0f, speed * Time.deltaTime);
+            lastDirection = direction;
         }
         else if(direction == RotateDirection.right)
         {
             transform.Rotate(0f, 0f, -speed * Time.deltaTime);
+            lastDirection = direction;
         }
+
+        
 
     }
 
