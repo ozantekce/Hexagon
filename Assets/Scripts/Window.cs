@@ -12,6 +12,7 @@ public class Window : MonoBehaviour
     private static Window _lastWindow;
 
     public static Window LastWindow { get => _lastWindow; }
+    public Material CurrentMaterial { get => _currentMaterial; set => _currentMaterial = value; }
 
     void Awake()
     {
@@ -34,6 +35,23 @@ public class Window : MonoBehaviour
 
         _lastWindow = this;
 
+    }
+
+    private Material _currentMaterial;
+
+    private void Start()
+    {
+        string materialName = Ball.Instance.GetRandomMaterial();
+        _currentMaterial = Ball.Instance.MaterialsDictionary[materialName];
+
+        foreach (Transform child in transform)
+        {
+            MeshRenderer meshRenderer = child.GetComponent<MeshRenderer>();
+            meshRenderer.material = _currentMaterial;
+            Color color = meshRenderer.material.color;
+            color.a = 0.3f;
+            meshRenderer.material.color = color;
+        }
     }
 
     public static void ResetStaticValues()
@@ -63,7 +81,7 @@ public class Window : MonoBehaviour
             //rb.transform.DOScale(0.2f, 0.5f);
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 

@@ -2,20 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System;
+using Random = UnityEngine.Random;
+using System.Linq;
 
 public class Ball : MonoBehaviour
 {
-
 
     private static Ball instance;
 
     private void Awake()
     {
         instance = this;
+        _materialsDictionary = new Dictionary<string, Material>();
+        for (int i = 0; i < _materials.Length; i++)
+        {
+            _materialsDictionary.Add(_materials[i].name, _materials[i].material);
+        }
+
     }
 
     [SerializeField]
     private float _speed;
+
+
+
+    private Material _currentMaterial;
+    private Dictionary<string, Material> _materialsDictionary;
+    [SerializeField]
+    private MaterialInfo[] _materials;
 
 
     private Rigidbody _rigidbody;
@@ -36,12 +51,17 @@ public class Ball : MonoBehaviour
     public Rigidbody Rigidbody { get => _rigidbody; set => _rigidbody = value; }
     public MeshRenderer MeshRenderer { get => _meshRenderer; set => _meshRenderer = value; }
     public Collider Collider { get => _collider; set => _collider = value; }
+    public Material CurrentMaterial { get => _currentMaterial; set => _currentMaterial = value; }
+    public Dictionary<string, Material> MaterialsDictionary { get => _materialsDictionary; set => _materialsDictionary = value; }
 
     private void Start()
     {
         Rigidbody = GetComponent<Rigidbody>();
         MeshRenderer = GetComponent<MeshRenderer>();
         Collider = GetComponent<Collider>();
+
+        ChangeMaterial(GetRandomMaterial());
+
     }
 
     void Update()
@@ -63,14 +83,28 @@ public class Ball : MonoBehaviour
 
         if (Touch.Pressing)
         {
-            float speed = Hexagon.Instance.MaxRotationSpeed * (TouchDistanceToCenter()) / (Screen.width / 2);
-            Hexagon.Instance.Rotate(TouchDirection(), speed);
+            float speed = Hexagon.Instance.MaxRotationSpeed * (Touch.TouchDistanceToCenter()) / (Screen.width / 2);
+            Hexagon.Instance.Rotate(Touch.TouchDirection(), speed);
         }
 
         GoForward();
 
 
 
+    }
+
+
+
+    public void ChangeMaterial(string name)
+    {
+        CurrentMaterial = _materialsDictionary[name];
+        MeshRenderer.material = CurrentMaterial;
+    }
+
+    public string GetRandomMaterial()
+    {
+        int index = Random.Range(0,_materialsDictionary.Count);
+        return _materialsDictionary.Keys.ElementAt(index);
     }
 
 
@@ -84,36 +118,7 @@ public class Ball : MonoBehaviour
 
 
 
-    private float TouchDistanceToCenter()
-    {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.x -= Screen.width / 2;
 
-        //Debug.Log(mousePos.x + " " + Screen.width/2);
-        float dis = Mathf.Abs(mousePos.x);
-        return Mathf.Clamp(dis, 0, Screen.width / 2);
-    }
-
-    private RotateDirection TouchDirection()
-    {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.x -= Screen.width / 2;
-
-        float gap = 10f;
-        if (Mathf.Abs(mousePos.x) < gap)
-        {
-            return RotateDirection.none;
-        }
-        else if(mousePos.x > 0)
-        {
-            return RotateDirection.right;
-        }
-        else
-        {
-            return RotateDirection.left;
-        }
-
-    }
 
 
     private void OnTriggerEnter(Collider other)
@@ -127,8 +132,24 @@ public class Ball : MonoBehaviour
 
         if (other.CompareTag("Window"))
         {
+
+
+
             Debug.Log("Window");
-            other.GetComponent<Window>().BreakWindow();
+            Window window = other.GetComponent<Window>();
+
+            if (CurrentMaterial.Equals(window.CurrentMaterial))
+            {
+                other.GetComponent<Window>().BreakWindow();
+            }
+            else
+            {
+                Debug.Log("GameOver");
+                StartCoroutine(Died());
+            }
+            
+
+
         }
 
     }
@@ -163,6 +184,13 @@ public class Ball : MonoBehaviour
 
     }
 
+
+    [Serializable]
+    struct MaterialInfo
+    {
+        public string name;
+        public Material material;
+    }
 
 }
 

@@ -249,6 +249,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
+  _materials:
+  - name: Blue
+    material: {fileID: 2100000, guid: 3fe628af299c26b449f7d30e035481dc, type: 2}
+  - name: Green
+    material: {fileID: 2100000, guid: 86c9e4a3027b0e643941de11c150cc0d, type: 2}
+  - name: Purple
+    material: {fileID: 2100000, guid: ff80676706f700f48b15b7ecc3c27980, type: 2}
+  - name: Red
+    material: {fileID: 2100000, guid: 289c4bdb9b5808841ae4ad4e84cf08fb, type: 2}
 --- !u!1 &640954236
 GameObject:
   m_ObjectHideFlags: 0
