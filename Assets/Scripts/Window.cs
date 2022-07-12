@@ -54,6 +54,23 @@ public class Window : MonoBehaviour
         }
     }
 
+
+
+    private int delay;
+    private void Update()
+    {
+        delay++;
+        if (delay >= 10)
+        {
+            if (transform.position.z < Ball.Instance.Z - 4)
+            {
+                this.gameObject.SetActive(false);
+            }
+            delay = 0;
+        }
+
+    }
+
     public static void ResetStaticValues()
     {
         _lastWindow = null;

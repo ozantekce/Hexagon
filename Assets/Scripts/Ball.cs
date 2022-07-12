@@ -67,16 +67,18 @@ public class Ball : MonoBehaviour
     void Update()
     {
 
-        if(GameController.Instance.GameStatus == GameStatus.waitForMove)
+        if(GameController.Instance.CurrentStatus == GameStatus.waitToPlay)
         {
+            
             if (Touch.Pressing)
             {
-                GameController.Instance.GameStatus = GameStatus.moving;
+                GameController.Instance.ChangeGameStatus(GameStatus.playing);
             }
         }
 
-        if (GameController.Instance.GameStatus != GameStatus.moving)
+        if (GameController.Instance.CurrentStatus != GameStatus.playing)
         {
+            Ball.Instance.Rigidbody.velocity = Vector3.zero;
             return;
         }
 
@@ -158,7 +160,7 @@ public class Ball : MonoBehaviour
 
     private IEnumerator Died()
     {
-        GameController.Instance.GameStatus = GameStatus.died;
+        GameController.Instance.ChangeGameStatus(GameStatus.died);
 
         Collider.enabled = false;
 
@@ -176,12 +178,17 @@ public class Ball : MonoBehaviour
             ,transform.position,Quaternion.identity);
 
 
+        foreach (Transform child in explosion.transform)
+        {
+            child.GetComponent<ParticleSystem>().startColor = CurrentMaterial.color;
+        }
+
         yield return new WaitForSeconds(1.1f);
 
         Destroy(explosion);
 
         Rigidbody.constraints = RigidbodyConstraints.FreezePositionZ;
-
+        GameController.Instance.ChangeGameStatus(GameStatus.menu);
     }
 
 
