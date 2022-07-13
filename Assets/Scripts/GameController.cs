@@ -10,6 +10,10 @@ public class GameController : MonoBehaviour
     public static GameController Instance { get => instance; set => instance = value; }
     public GameStatus CurrentStatus { get => _currentStatus; }
 
+
+    public int Level { get => PlayerPrefs.GetInt("Level", 1); set { PlayerPrefs.SetInt("Level", value); } }
+
+
     private GameObject mainMenuScreen;
     private GameObject gameplay;
 
@@ -35,12 +39,6 @@ public class GameController : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        
-
-
-    }
 
 
     private void PlayButton()
@@ -185,6 +183,7 @@ public class GameController : MonoBehaviour
                     Destroy(Hexagon.Instance.transform.GetChild(i).gameObject);
                 }
                 CreateNewLevel();
+                Debug.Log("Current Level : "+Level);
                 Ball.Instance.MeshRenderer.enabled = true;
                 Ball.Instance.Collider.enabled = true;
                 Ball.Instance.ChangeMaterial(Ball.Instance.GetRandomMaterial());

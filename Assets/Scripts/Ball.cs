@@ -204,6 +204,7 @@ public class Ball : MonoBehaviour
 
     private IEnumerator LevelUp()
     {
+        GameController.Instance.Level++;
         Collider.enabled = false;
         Rigidbody.isKinematic = true;
         CameraFollow.Following = false;
@@ -212,6 +213,8 @@ public class Ball : MonoBehaviour
         GameController.Instance.ChangeGameStatus(GameStatus.waitToPlay);
         CameraFollow.Following = true;
         Rigidbody.isKinematic = false;
+
+
     }
 
 
