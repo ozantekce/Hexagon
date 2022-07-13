@@ -58,6 +58,10 @@ public class GameController : MonoBehaviour
     private int numberOfWindows = 10;
     private void CreateNewLevel()
     {
+        Debug.Log("Current Level : " + Level);
+        
+        numberOfObstacles = (1+Level/3) * numberOfObstacles;
+        numberOfWindows = (1+Level/3) * numberOfWindows;
 
         Obstacle.ResetStaticValues();
         GameObject obstacle;
@@ -183,7 +187,7 @@ public class GameController : MonoBehaviour
                     Destroy(Hexagon.Instance.transform.GetChild(i).gameObject);
                 }
                 CreateNewLevel();
-                Debug.Log("Current Level : "+Level);
+                
                 Ball.Instance.MeshRenderer.enabled = true;
                 Ball.Instance.Collider.enabled = true;
                 Ball.Instance.ChangeMaterial(Ball.Instance.GetRandomMaterial());
